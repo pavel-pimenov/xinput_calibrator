@@ -23,6 +23,7 @@
 #include "calibrator/XorgPrint.hpp"
 
 #include <cstdio>
+#include <cerrno>
 
 CalibratorXorgPrint::CalibratorXorgPrint(const char* const device_name0, const XYinfo& axys0, const int thr_misclick, const int thr_doubleclick, const OutputType output_type, const char* geometry, const bool use_timeout, const char* output_filename)
   : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry, use_timeout, output_filename)
@@ -92,8 +93,8 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
     extern int g_display_height;
                 const float a = float((g_display_width * 6 / 8) / (clicked.x[3] - clicked.x[0])); 
                 const float b = float((g_display_width / 8) - (a * clicked.x[0]) / g_display_width); 
-                const float e = float((screen_height * 6 / 8) / (clicked.y[3] - clicked.y[0])); 
-                const float f = float((screen_height / 8) - (e * clicked.y[0]) / screen_height); 
+                const float e = float((g_display_height * 6 / 8) / (clicked.y[3] - clicked.y[0])); 
+                const float f = float((g_display_height / 8) - (e * clicked.y[0]) / g_display_height); 
     int l_result = fprintf(pFile,
 		"#! /bin/bash\n"
 		"export DISPLAY=:0\n"

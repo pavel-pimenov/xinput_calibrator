@@ -1,3 +1,4 @@
+rm xinput-calibrator-x11
 gcc -pedantic -pthread -static -O2 -o xinput-calibrator-x11 \
  calibrator.cpp \
  calibrator/XorgPrint.cpp calibrator/Evdev.cpp calibrator/Usbtouchscreen.cpp main_common.cpp \
