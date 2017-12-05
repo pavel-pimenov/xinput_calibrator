@@ -37,6 +37,10 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/XInput.h>
 
+#include <cerrno>
+#include <cstdlib>
+#include <sys/stat.h>
+
 // strdup: non-ansi
 static char* my_strdup(const char* s) {
     size_t len = strlen(s) + 1;
