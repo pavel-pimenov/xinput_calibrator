@@ -55,9 +55,15 @@ CalibrationArea::CalibrationArea(Calibrator* calibrator0)
     }
 }
 
+int g_display_width_gtk;
+int g_display_height_gtk;
+
 void CalibrationArea::set_display_size(int width, int height) {
     display_width = width;
     display_height = height;
+
+    g_display_width_gtk = display_width;
+    g_display_height_gtk = display_height;
 
     // Compute absolute circle centers
     const int delta_x = display_width/num_blocks;

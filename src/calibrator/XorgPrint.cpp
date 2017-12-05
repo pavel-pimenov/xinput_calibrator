@@ -39,6 +39,9 @@ bool CalibratorXorgPrint::finish_data(const XYinfo &new_axys)
 
 
     printf("\t--> Making the calibration permanent <--\n");
+
+    output_udev(new_axys);
+
     switch (output_type) {
         case OUTYPE_AUTO:
             // xorg.conf.d or alternatively hal config
@@ -62,6 +65,58 @@ bool CalibratorXorgPrint::finish_data(const XYinfo &new_axys)
     return success;
 }
 
+bool CalibratorXorgPrint::output_udev(const XYinfo& new_axys, const char* sysfs_name)
+{
+  const char* l_udev = "/etc/udev/touch-nlmk";
+  FILE * pFile = fopen (l_udev,"w");
+  if (pFile!=NULL)
+  {
+/*
+screen_width	1024	
+screen_height	768	
+		
+	X	Y
+click 0	246	200
+click 1	658	196
+click 2	245	485
+click 3	661	485
+		
+		
+a	1,85060241	a = (screen_width * 6 / 8) / (click_3_X - click_0_X)
+c	-0,319578313	c = ((screen_width / 8) - (a * click_0_X)) / screen_width
+e	2,021052632	e = (screen_height * 6 / 8) / (click_3_Y - click_0_Y)
+f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
+
+*/
+    extern int g_display_width;
+    extern int g_display_height;
+                const float a = float((g_display_width * 6 / 8) / (clicked.x[3] - clicked.x[0])); 
+                const float b = float((g_display_width / 8) - (a * clicked.x[0]) / g_display_width); 
+                const float e = float((screen_height * 6 / 8) / (clicked.y[3] - clicked.y[0])); 
+                const float f = float((screen_height / 8) - (e * clicked.y[0]) / screen_height); 
+    int l_result = fprintf(pFile,
+		"#! /bin/bash\n"
+		"export DISPLAY=:0\n"
+		"/usr/bin/xinput set-prop \"%s\" --type=float \"libinput Calibration Matrix\" %f 0 %f 0 %f %f 0 0 1\n"
+                ,sysfs_name
+                , a 
+                , b 
+                , e 
+                , f);
+
+    if(l_result <= 0)
+     {
+       fprintf(stderr, "Error: Can't fprintf '%s' errno = %d\n", l_udev, errno);
+     }
+    fclose (pFile);
+  }
+  else
+  {
+       fprintf(stderr, "Error: Can't open '%s' for writing. Make sure you have the necessary rights\n", l_udev);
+       return false;  
+  }
+ return true;
+}
 bool CalibratorXorgPrint::output_xorgconfd(const XYinfo new_axys)
 {
     const char* sysfs_name = get_sysfs_name();

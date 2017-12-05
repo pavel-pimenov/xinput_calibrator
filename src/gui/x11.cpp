@@ -59,6 +59,9 @@ void GuiCalibratorX11::make_instance(Calibrator* w)
 // Singleton instance
 GuiCalibratorX11* GuiCalibratorX11::instance = NULL;
 
+int g_display_width;
+int g_display_height;
+
 GuiCalibratorX11::GuiCalibratorX11(Calibrator* calibrator0)
   : calibrator(calibrator0), time_elapsed(0)
 {
@@ -87,6 +90,9 @@ GuiCalibratorX11::GuiCalibratorX11(Calibrator* calibrator0)
 
     fprintf(stderr, "INFO: width=%d, height=%d\n", 
         display_width, display_height);
+
+    g_display_width = display_width;
+    g_display_height = display_height;
 
     // parse geometry string
     const char* geo = calibrator->get_geometry();
