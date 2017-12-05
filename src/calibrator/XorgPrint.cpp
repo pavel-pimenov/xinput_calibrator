@@ -123,6 +123,13 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
         {
           fprintf(stderr, "Error: Can't chmod 0775 '%s'. Make sure you have the necessary rights\n", l_udev);
         }
+	else
+        {
+	    if(system(l_udev) < 0 )
+              {
+                fprintf(stderr, "Error: Can't call system('%s')\n", l_udev);
+              }
+	}
     }
     const char* l_udev_rules = "/etc/udev/rules.d/98-touchscreen-cal.rules";
     pFile = fopen (l_udev_rules,"w");
