@@ -68,7 +68,8 @@ bool CalibratorXorgPrint::finish_data(const XYinfo &new_axys)
 
 bool CalibratorXorgPrint::output_udev()
 {
-  const char* sysfs_name = get_safe_sysfs_name();
+  bool not_sysfs_name;
+  const char* sysfs_name = get_safe_sysfs_name(not_sysfs_name);
 
   const char* l_udev = "/etc/udev/touch-nlmk";
   FILE * pFile = fopen (l_udev,"w");
@@ -93,18 +94,23 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
 */
     extern int g_display_width;
     extern int g_display_height;
-                const float a = float((g_display_width * 6 / 8) / (clicked.x[3] - clicked.x[0])); 
-                const float b = float((g_display_width / 8) - (a * clicked.x[0]) / g_display_width); 
-                const float e = float((g_display_height * 6 / 8) / (clicked.y[3] - clicked.y[0])); 
-                const float f = float((g_display_height / 8) - (e * clicked.y[0]) / g_display_height); 
+    printf("DEBUG:\n");
+    for (int i=0;i<clicked.num;++i)
+    {
+      printf("clicked.x[%d] = %f clicked.y[%d] = %f\n", i, float(clicked.x[i]), i, float(clicked.y[i]));
+    }
+                const float a = (float(g_display_width) * 6.0 / 8.0) / (float(clicked.x[3]) - float(clicked.x[0]));
+                const float b = ((float(g_display_width) / 8.0) - (a * float(clicked.x[0]))) / float(g_display_width);
+                const float e = (float(g_display_height) * 6.0 / 8.0) / (float(clicked.y[3]) - float(clicked.y[0]));
+                const float f = ((float(g_display_height) / 8.0) - (e * float(clicked.y[0]))) / float(g_display_height);
     int l_result = fprintf(pFile,
 		"#! /bin/bash\n"
 		"export DISPLAY=:0\n"
 		"/usr/bin/xinput set-prop \"%s\" --type=float \"libinput Calibration Matrix\" %f 0 %f 0 %f %f 0 0 1\n"
-                ,sysfs_name
-                , a 
-                , b 
-                , e 
+                , sysfs_name
+                , a
+                , b
+                , e
                 , f);
 
     if(l_result <= 0)
