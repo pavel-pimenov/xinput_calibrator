@@ -404,8 +404,8 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
       if(l_result <= 0)
       {
        fprintf(stderr, "Error: Can't fprintf '%s' errno = %d\n", l_udev, errno);
-       return false;
       }
+      else
       {
        if (chmod(l_udev,std::atoi("0775")) < 0)
           {
@@ -416,8 +416,9 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
             if(system(l_udev) < 0 )
               {
                 fprintf(stderr, "Error: Can't call system('%s')\n", l_udev);
-              } 
+              }
           }
+        }
       }
     }
     // Different device/driver, different ways to apply the calibration values
