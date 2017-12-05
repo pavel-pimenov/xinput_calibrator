@@ -44,7 +44,7 @@ protected:
     bool output_hal(const XYinfo new_axys);
     bool output_udev();
 private:
-    const char* get_safe_sysfs_name();
+    const char* get_safe_sysfs_name(bool& not_sysfs_name);
 };
 
 #endif

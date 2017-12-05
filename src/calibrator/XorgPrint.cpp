@@ -121,17 +121,18 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
  return true;
 }
 
-const char* CalibratorXorgPrint::get_safe_sysfs_name()
+const char* CalibratorXorgPrint::get_safe_sysfs_name(bool& not_sysfs_name)
 {
     const char* sysfs_name = get_sysfs_name();
-    const bool not_sysfs_name = (sysfs_name == NULL);
+    not_sysfs_name = (sysfs_name == NULL);
     if (not_sysfs_name)
         sysfs_name = "!!Name_Of_TouchScreen!!";
 }
 
 bool CalibratorXorgPrint::output_xorgconfd(const XYinfo new_axys)
 {
-    const char* sysfs_name = get_safe_sysfs_name();
+    bool not_sysfs_name;
+    const char* sysfs_name = get_safe_sysfs_name(not_sysfs_name);
 
     if(output_filename == NULL || not_sysfs_name)
         printf("  copy the snippet below into '/etc/X11/xorg.conf.d/99-calibration.conf' (/usr/share/X11/xorg.conf.d/ in some distro's)\n");
@@ -183,7 +184,8 @@ bool CalibratorXorgPrint::output_xorgconfd(const XYinfo new_axys)
 
 bool CalibratorXorgPrint::output_hal(const XYinfo new_axys)
 {
-    const char* sysfs_name = get_safe_sysfs_name();
+    bool not_sysfs_name;
+    const char* sysfs_name = get_safe_sysfs_name(not_sysfs_name);
 
     if(output_filename == NULL || not_sysfs_name)
         printf("  copy the policy below into '/etc/hal/fdi/policy/touchscreen.fdi'\n");
