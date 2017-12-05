@@ -1,0 +1,7 @@
+gcc -pedantic -pthread -static -O2 -o xinput-calibrator-x11 \
+ calibrator.cpp \
+ calibrator/XorgPrint.cpp calibrator/Evdev.cpp calibrator/Usbtouchscreen.cpp main_common.cpp \
+ gui/gui_common.cpp \
+ gui/x11.cpp main_x11.cpp \
+ -I . \
+ -lstdc++ -lX11 -lpthread -lrt -lXi -lXext -lm -lxcb -lXdmcp -lXau
