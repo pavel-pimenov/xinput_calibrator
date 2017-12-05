@@ -80,14 +80,11 @@ bool CalibratorXorgPrint::output_udev()
 /*
 screen_width	1024	
 screen_height	768	
-		
 	X	Y
 click 0	246	200
 click 1	658	196
 click 2	245	485
 click 3	661	485
-		
-		
 a	1,85060241	a = (screen_width * 6 / 8) / (click_3_X - click_0_X)
 c	-0,319578313	c = ((screen_width / 8) - (a * click_0_X)) / screen_width
 e	2,021052632	e = (screen_height * 6 / 8) / (click_3_Y - click_0_Y)
@@ -101,10 +98,10 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
     {
       printf("clicked.x[%d] = %f clicked.y[%d] = %f\n", i, float(clicked.x[i]), i, float(clicked.y[i]));
     }
-                const float a = (float(g_display_width) * 6.0 / 8.0) / (float(clicked.x[3]) - float(clicked.x[0]));
-                const float b = ((float(g_display_width) / 8.0) - (a * float(clicked.x[0]))) / float(g_display_width);
-                const float e = (float(g_display_height) * 6.0 / 8.0) / (float(clicked.y[3]) - float(clicked.y[0]));
-                const float f = ((float(g_display_height) / 8.0) - (e * float(clicked.y[0]))) / float(g_display_height);
+    const float a = (float(g_display_width) * 6.0 / 8.0) / (float(clicked.x[3]) - float(clicked.x[0]));
+    const float b = ((float(g_display_width) / 8.0) - (a * float(clicked.x[0]))) / float(g_display_width);
+    const float e = (float(g_display_height) * 6.0 / 8.0) / (float(clicked.y[3]) - float(clicked.y[0]));
+    const float f = ((float(g_display_height) / 8.0) - (e * float(clicked.y[0]))) / float(g_display_height);
     const int l_result = fprintf(pFile,
 		"#! /bin/bash\n"
 		"export DISPLAY=:0\n"

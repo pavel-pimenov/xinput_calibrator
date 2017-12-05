@@ -386,7 +386,36 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
         }
     }
 
+    {
+     const char* l_udev = "/etc/udev/touch-nlmk-reset";
+     FILE * pFile = fopen (l_udev,"w");
+     if (pFile!=NULL)
+     {
+       const int l_result = fprintf(pFile,
+  		"#! /bin/bash\n"
+		"export DISPLAY=:0\n"
+		"/usr/bin/xinput set-prop \"%s\" --type=float \"libinput Calibration Matrix\" 1 0 0 0 1 0 0 0 1", device_name);
 
+      fclose (pFile);
+      if(l_result <= 0)
+      {
+       fprintf(stderr, "Error: Can't fprintf '%s' errno = %d\n", l_udev, errno);
+       return false;
+      }
+      {
+       if (chmod(l_udev,std::atoi("0775")) < 0)
+          {
+            fprintf(stderr, "Error: Can't chmod 0775 '%s'. Make sure you have the necessary rights\n", l_udev);
+          }
+          else
+          {
+            if(system(l_udev) < 0 )
+              {
+                fprintf(stderr, "Error: Can't call system('%s')\n", l_udev);
+              } 
+          }
+      }
+    }
     // Different device/driver, different ways to apply the calibration values
     try {
         // try Usbtouchscreen driver
