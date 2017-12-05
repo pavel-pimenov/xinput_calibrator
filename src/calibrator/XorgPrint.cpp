@@ -41,7 +41,7 @@ bool CalibratorXorgPrint::finish_data(const XYinfo &new_axys)
 
     printf("\t--> Making the calibration permanent <--\n");
 
-    output_udev(new_axys);
+    output_udev();
 
     switch (output_type) {
         case OUTYPE_AUTO:
@@ -123,8 +123,8 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
 
 const char* CalibratorXorgPrint::get_safe_sysfs_name()
 {
-   const char* sysfs_name = get_sysfs_name();
-    bool not_sysfs_name = (sysfs_name == NULL);
+    const char* sysfs_name = get_sysfs_name();
+    const bool not_sysfs_name = (sysfs_name == NULL);
     if (not_sysfs_name)
         sysfs_name = "!!Name_Of_TouchScreen!!";
 }
