@@ -206,6 +206,7 @@ static void usage(char* cmd, unsigned thr_misclick)
     fprintf(stderr, "\t--geometry: manually provide the geometry (width and height) for the calibration window\n");
     fprintf(stderr, "\t--no-timeout: turns off the timeout\n");
     fprintf(stderr, "\t--output-filename: write calibration data to file (USB: override default /etc/modprobe.conf.local\n");
+    fprintf(stderr, "\t--no-reset-calibration: skip /etc/udev/touch-nlmk-reset\n");
 }
 
 Calibrator* Calibrator::make_calibrator(int argc, char** argv)
@@ -214,6 +215,7 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
     bool fake = false;
     bool precalib = false;
     bool use_timeout = true;
+    bool no_reset_calibration = false;
     XYinfo pre_axys;
     const char* pre_device = NULL;
     const char* geometry = NULL;
@@ -312,6 +314,9 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
             if (strcmp("--fake", argv[i]) == 0) {
                 fake = true;
             } else
+            if (strcmp("--no-reset-calibration", argv[i]) == 0) {
+                no_reset_calibration = true;
+            } else
 
             // Disable timeout
 			if (strcmp("--no-timeout", argv[i]) == 0) {
@@ -389,7 +394,7 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
                 device_axys.y.min, device_axys.y.max);
         }
     }
-
+    if(no_reset_calibration == false)
     {
      const char* l_udev = "/etc/udev/touch-nlmk-reset";
      FILE * pFile = fopen (l_udev,"w");
