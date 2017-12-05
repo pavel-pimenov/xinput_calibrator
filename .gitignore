@@ -18,3 +18,4 @@ mkinstalldirs
 *.o
 *.pc
 tester
+xinput-calibrator-x11

@@ -1,6 +1,0 @@
-gcc -std=c++11 -static -O2 -o xinput-calibrator-gtk \
- calibrator.cpp \
- calibrator/XorgPrint.cpp calibrator/Evdev.cpp calibrator/Usbtouchscreen.cpp main_common.cpp \
- gui/gui_common.cpp \
- gui/gtkmm.cpp main_gtkmm.cpp \
- -lstdc++
