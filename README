@@ -1,5 +1,60 @@
 xinput calibrator: A generic touchscreen calibration program for X.Org
 
+Version: 0.7.5-ppa-1
+1. Определить разрешение экрана
+xrandr | grep current
+Screen 0: minimum 320 x 200, current 1024 x 768, maximum 16384 x 16384
+
+2. Сбросить действующие настройки калибрации
+/usr/bin/xinput set-prop "SEMTECH ScreenCoder TM UR7HCTS2-USB" --type=float "libinput Calibration Matrix" 1 0 0 0 1 0 0 0 1
+
+3. Запустить программу калибрации в отладочном режиме
+xinput_calibrator -v
+DEBUG: XInputExtension version is 2.3
+DEBUG: Skipping virtual master devices and devices without axis valuators.
+DEBUG: Skipping device 'Virtual core XTEST pointer' id=4, does not report Absolute events.
+DEBUG: Skipping device 'PixArt HP USB Optical Mouse' id=9, does not report Absolute events.
+DEBUG: Skipping device 'Chicony HP Elite USB Keyboard' id=11, does not report Absolute events.
+DEBUG: Selected device: SEMTECH ScreenCoder TM UR7HCTS2-USB
+DEBUG: Not usbtouchscreen calibrator: Not a usbtouchscreen device
+DEBUG: Not evdev calibrator: Evdev: invalid "Evdev Axis Calibration" property format
+Calibrating standard Xorg driver "SEMTECH ScreenCoder TM UR7HCTS2-USB"
+        current calibration values: min_x=0, max_x=65535 and min_y=0, max_y=65535
+        If these values are estimated wrong, either supply it manually with the --precalib option, or run the 'get_precalib.sh' script to automatically get it (through HAL).
+DEBUG: Found that 'SEMTECH ScreenCoder TM UR7HCTS2-USB' is a sysfs name.
+DEBUG: Adding click 0 (X=248, Y=200)
+DEBUG: Adding click 1 (X=658, Y=196)
+DEBUG: Adding click 2 (X=245, Y=485)
+DEBUG: Adding click 3 (X=660, Y=485)
+        --> Making the calibration permanent <--
+
+4. Внести выделенные красным значения в excel-калькулятор. Автоматически будут рассчитаны значения a, c, e, f.
+
+screen_width	1024	
+screen_height	768	
+		
+	X	Y
+click 0	246	200
+click 1	658	196
+click 2	245	485
+click 3	661	485
+		
+		
+a	1,85060241	a = (screen_width * 6 / 8) / (click_3_X - click_0_X)
+c	-0,319578313	c = ((screen_width / 8) - (a * click_0_X)) / screen_width
+e	2,021052632	e = (screen_height * 6 / 8) / (click_3_Y - click_0_Y)
+f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
+
+
+5. Создать/исправить исполняемый файл /etc/udev/semtech с указанием рассчитанных значений a, c, e, f.
+#! /bin/bash
+export DISPLAY=:0
+/usr/bin/xinput set-prop "SEMTECH ScreenCoder TM UR7HCTS2-USB" --type=float "libinput Calibration Matrix" 1.85060241 0 -0.319578313 0 2.021052632 -0.401315789 0 0 1
+
+6. Автоматический запуск настройки организован через udev (файл /etc/udev/rules.d/98-touchscreen-cal.rules)
+ATTRS{name}=="SEMTECH ScreenCoder TM UR7HCTS2-USB", RUN+="/sbin/start-stop-daemon --start --background --exec /etc/udev/semtech"
+
+
 Version: 0.7.5
 Website: http://www.freedesktop.org/wiki/Software/xinput_calibrator
 Source:  http://github.com/tias/xinput_calibrator
@@ -42,3 +97,4 @@ The v0.5.0 version is written entirely in the X window system, needing no extern
 Version v0.6.0 has a proper build system and gained a lot of features thanks to the feedback of different users.
 
 Version 0.7.0 has mis-click detection and proper packaging support: proper make dist, one binary, has manpage, menu entry and icon. DEB and RPM package meta-data in their respective VCS branches.
+
