@@ -120,6 +120,11 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
        return false;
     }
     {
+     if (chmod(buf,atoi("0775")) < 0)
+       {
+          fprintf(stderr, "Error: Can't chmod 0775 '%s'. Make sure you have the necessary rights\n", l_udev);
+       }
+    }
     const char* l_udev_rules = "/etc/udev/rules.d/98-touchscreen-cal.rules";
     pFile = fopen (l_udev_rules,"w");
     if (pFile!=NULL)
