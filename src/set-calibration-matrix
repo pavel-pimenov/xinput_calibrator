@@ -1,4 +1,4 @@
 #! /bin/bash
 export DISPLAY=:0
-xinput set-prop "SEMTECH ScreenCoder TM UR7HCTS2-USB" --type=float "libinput Calibration Matrix" 1.85060241 0 -0.319578313 0 2.021052632 -0.401315789 0 0 1
+#xinput set-prop "SEMTECH ScreenCoder TM UR7HCTS2-USB" --type=float "libinput Calibration Matrix" 1.85060241 0 -0.319578313 0 2.021052632 -0.401315789 0 0 1
 xinput list-props "SEMTECH ScreenCoder TM UR7HCTS2-USB"

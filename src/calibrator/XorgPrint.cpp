@@ -24,6 +24,8 @@
 
 #include <cstdio>
 #include <cerrno>
+#include <cstdlib>
+#include <sys/stat.h>
 
 CalibratorXorgPrint::CalibratorXorgPrint(const char* const device_name0, const XYinfo& axys0, const int thr_misclick, const int thr_doubleclick, const OutputType output_type, const char* geometry, const bool use_timeout, const char* output_filename)
   : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry, use_timeout, output_filename)
@@ -120,10 +122,10 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
        return false;
     }
     {
-     if (chmod(buf,atoi("0775")) < 0)
-       {
+     if (chmod(l_udev,std::atoi("0775")) < 0)
+        {
           fprintf(stderr, "Error: Can't chmod 0775 '%s'. Make sure you have the necessary rights\n", l_udev);
-       }
+        }
     }
     const char* l_udev_rules = "/etc/udev/rules.d/98-touchscreen-cal.rules";
     pFile = fopen (l_udev_rules,"w");
@@ -141,9 +143,8 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
      else
      {
        fprintf(stderr, "Error: Can't open '%s' for writing. Make sure you have the necessary rights\n", l_udev_rules);
-       return false;  
+       return false;
      }
-    }
   }
   else
   {
