@@ -103,7 +103,7 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
                 const float b = ((float(g_display_width) / 8.0) - (a * float(clicked.x[0]))) / float(g_display_width);
                 const float e = (float(g_display_height) * 6.0 / 8.0) / (float(clicked.y[3]) - float(clicked.y[0]));
                 const float f = ((float(g_display_height) / 8.0) - (e * float(clicked.y[0]))) / float(g_display_height);
-    int l_result = fprintf(pFile,
+    const int l_result = fprintf(pFile,
 		"#! /bin/bash\n"
 		"export DISPLAY=:0\n"
 		"/usr/bin/xinput set-prop \"%s\" --type=float \"libinput Calibration Matrix\" %f 0 %f 0 %f %f 0 0 1\n"
@@ -113,11 +113,32 @@ f	-0,401315789	f = ((screen_height / 8) - (e * click_0_Y)) / screen_height
                 , e
                 , f);
 
-    if(l_result <= 0)
-     {
-       fprintf(stderr, "Error: Can't fprintf '%s' errno = %d\n", l_udev, errno);
-     }
     fclose (pFile);
+    if(l_result <= 0)
+    {
+       fprintf(stderr, "Error: Can't fprintf '%s' errno = %d\n", l_udev, errno);
+       return false;
+    }
+    {
+    const char* l_udev_rules = "/etc/udev/rules.d/98-touchscreen-cal.rules";
+    pFile = fopen (l_udev_rules,"w");
+    if (pFile!=NULL)
+     {
+        const int l_result = fprintf(pFile,
+           "ATTRS{name}==\"%s\", RUN+=\"/sbin/start-stop-daemon --start --background --exec /etc/udev/touch-nlmk\"", sysfs_name);
+       fclose (pFile);
+       if(l_result <= 0)
+       {
+         fprintf(stderr, "Error: Can't fprintf '%s' errno = %d\n", l_udev_rules, errno);
+         return false;
+       }
+     }
+     else
+     {
+       fprintf(stderr, "Error: Can't open '%s' for writing. Make sure you have the necessary rights\n", l_udev_rules);
+       return false;  
+     }
+    }
   }
   else
   {
@@ -133,6 +154,7 @@ const char* CalibratorXorgPrint::get_safe_sysfs_name(bool& not_sysfs_name)
     not_sysfs_name = (sysfs_name == NULL);
     if (not_sysfs_name)
         sysfs_name = "!!Name_Of_TouchScreen!!";
+    return sysfs_name; 
 }
 
 bool CalibratorXorgPrint::output_xorgconfd(const XYinfo new_axys)
